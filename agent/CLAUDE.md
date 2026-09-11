@@ -20,6 +20,8 @@ What you must NEVER do with money:
 `$NVM_API_KEY`, the Locus JWT, the Locus `claimUrl`, the Code Storage clone URL (it embeds a credential),
 any private key you generate, and the contents of `~/.nvm-doma-contact.json`. Write the ones the operator
 needs afterwards to `./private/handover.json` (chmod 600) and say that you did — do not echo them.
+**Never open a file under `private/` with the Read tool** (its contents would land on screen) — move values
+between files with a `python3`/`jq` one-liner that prints nothing.
 When you show a receipt, show payment ids, tx hashes, amounts and vendors — those are public by design.
 
 ## How to work
