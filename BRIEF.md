@@ -31,7 +31,9 @@ Your wallet is funded on **Base (USDC, x402)** and **Tempo (USDC.e, MPP)**. Both
    (leave a clearly marked `<!-- VIDEO_EMBED -->` slot); and *Ship yours* — the repo link and the exact plugin
    install line (`/plugin marketplace add nevermined-io/docs` then `/plugin install nevermined-router@nevermined`).
    Design direction: modern, calm, editorial — a receipt-paper motif for the ledger (tabular numbers, mono),
-   large readable type, one accent colour, no template look, works on a phone, light and dark. No frameworks
+   large readable type, one accent colour, no template look, works on a phone, light and dark. The receipt
+   table is wide: give it its own `overflow-x: auto` wrapper and keep the amount/total columns visible first —
+   a clipped table is the one thing that must not happen to the receipt. No frameworks
    you have to download at runtime; hand-written CSS is fine.
 3. **A git repo of the site** bought from Code Storage through the Router, with the site pushed to it.
 4. **`./receipt/ledger.json`** = the raw `GET /api/v1/router/payments?delegationId=…` output, and
@@ -91,7 +93,9 @@ response is nulled** to protect the merchant host; that is why the free Locus ma
 1. **Sign up (free, direct, never 402s):** `POST https://mpp.buildwithlocus.com/v1/auth/mpp-sign-up`
    `{"tempoAddress": "<your delegation's providerPaymentMethodId>"}` → `{jwt, workspaceId, claimUrl}`. The
    JWT is your `Authorization: Bearer` for every Locus call. Save `claimUrl` to `private/handover.json` — it is
-   how the human later claims the workspace and the domain.
+   how the human later claims the workspace and the domain. If the response says `isNewWorkspace: false` and
+   `claimUrl` is null, the workspace already existed for this wallet and the operator already holds its claim
+   URL — note it and move on.
 2. **Top up credits through the Router over x402 on Base** (the MPP top-up is broken today — the Router's
    MPP credential collides with the JWT header, nvm#3463 — do not use it):
    `POST /api/v1/router/route` `{"url": "https://api.buildwithlocus.com/v1/billing/x402-top-up", "method":
