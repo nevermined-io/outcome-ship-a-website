@@ -17,8 +17,9 @@ The website it shipped is the receipt: every purchase links to its Router paymen
 | `site/` | The website the agent produced (copied out of its run) |
 | `receipt/` | `ledger.json` — the raw Router ledger; `receipt.json` — the curated receipt the site renders |
 | `video/` | How the video was made: the beats, the edit decision list, the narration lines, and the purchases behind them |
+| `docs/FRICTION.md` | The DevEx friction log — what broke or surprised, with issue links |
 
-## Replicate the site (one prompt, one delegation)
+## Tutorial — reproduce it (one prompt, one delegation)
 
 This is the part anyone can run. You need a Nevermined account on **Live**, a funded wallet, and ~$40.
 
@@ -56,6 +57,21 @@ This is the part anyone can run. You need a Nevermined account on **Live**, a fu
 The delegation cap is the only thing standing between the agent and your wallet — that is the point of
 the demo, and it is why the brief tells the agent never to widen it.
 
+**Expected output:** a live `https://<name>.com`, a public GitHub repo with the site, and a receipt of
+roughly this shape (observed on the reference run; prices are the vendors' live quotes, not guarantees):
+
+| Purchase | Vendor | Rail | Observed |
+|---|---|---|---|
+| Name research | glim.sh | MPP · Tempo | $0.01 |
+| Hosting credits (domain + compute) | Locus | x402 · Base | ~$20 (`.com` $16 + compute) |
+| Hero screenshot | ScreenshotOne | MPP · Tempo | $0.06 |
+| Router fee | Nevermined | — | 2% of each merchant leg |
+
+Time to first result: ~10 min to a live site on the host's subdomain; the purchased domain takes 1–15 min
+more to register and attach. **Troubleshooting:** `402 BCK.ROUTER.0003` = over the cap (raise it only by
+creating a new delegation yourself — the agent must not); `402 BCK.ROUTER.0009` = the wallet is short on
+that chain; a merchant 5xx after payment is the merchant's problem — see `docs/FRICTION.md`.
+
 ## Replicate the video (documented, not one-command)
 
 The video was recorded and cut with a local harness — VHS for the terminal, Playwright for the browser,
@@ -67,9 +83,8 @@ one-command reproduction and does not pretend to be.
 ## What we learned testing the catalog (2026-09-11)
 
 Building this exercised merchants nobody had paid through the Router before. Findings, filed as issues:
-- Router: an MPP credential overwrites the merchant auth a caller passes, so an MPP merchant that needs both
-  cannot be paid — nevermined-io/nvm-monorepo#3463.
-- Catalog health reports a merchant `operational` while its only endpoint 500s — nevermined-io/nvm-monorepo#3464.
+See `docs/FRICTION.md`. Filed so far: nevermined-io/nvm-monorepo#3463 (Router drops merchant auth on the
+MPP paid hop) and #3464 (catalog health false-green).
 
 ---
 Built by Nevermined · https://nevermined.ai
